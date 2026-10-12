@@ -1,8 +1,12 @@
 {
   "name": "brand-studio",
-  "description": "Complete brand identity toolkit: copywriting, visual design, and integrated brand kits",
+  "version": "0.2.0",
+  "description": "Portable skills for marketing copy, visual identity, and cohesive brand systems.",
   "author": {
-    "name": "ProofOfReach",
-    "email": "support@proofofreach.com"
-  }
+    "name": "Codeface Media",
+    "url": "https://codefacemedia.com"
+  },
+  "homepage": "https://github.com/ProofOfReach/brand-studio-plugin",
+  "repository": "https://github.com/ProofOfReach/brand-studio-plugin",
+  "license": "MIT"
 }

@@ -1,0 +1,12 @@
+{
+  "name": "brand-studio",
+  "interface": { "displayName": "Brand Studio" },
+  "plugins": [
+    {
+      "name": "brand-studio",
+      "source": { "source": "local", "path": "./" },
+      "policy": { "installation": "AVAILABLE" },
+      "category": "Design"
+    }
+  ]
+}
