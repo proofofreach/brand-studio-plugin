@@ -5,6 +5,13 @@
 
 set -e
 
+# Associative arrays below require Bash 4 or newer. This optional helper is
+# independent of the portable skills, which do not require a shell.
+if (( BASH_VERSINFO[0] < 4 )); then
+    echo "landing-page-scorer.sh requires Bash 4 or newer; run it with a compatible Bash executable." >&2
+    exit 2
+fi
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # COLORS AND FORMATTING
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -65,8 +72,8 @@ SCORING CATEGORIES (100 Points Total):
     5. Usability                0-10 points
     6. Technical                0-10 points
 
-GRADING SCALE:
-    90-100: Excellent    - Ready for high-traffic campaigns
+GRADING SCALE (editorial heuristics, not conversion forecasts or launch certification):
+    90-100: Excellent    - High heuristic score; validate with audience evidence
     75-89:  Good         - Minor optimizations recommended
     60-74:  Needs Work   - Address key issues before scaling
     Below 60: Major Issues - Significant revision required
@@ -170,7 +177,7 @@ METHODOLOGY_EOF
 # ═══════════════════════════════════════════════════════════════════════════════
 
 print_header() {
-    clear
+    if [[ -t 1 ]]; then clear || true; fi
     echo ""
     echo -e "${BOLD}${BLUE}╔══════════════════════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${BOLD}${BLUE}║              LANDING PAGE SCORER - 100-POINT SCORING SYSTEM                  ║${NC}"
@@ -234,10 +241,13 @@ get_score() {
     local score=0
 
     while true; do
-        echo -ne "  ${YELLOW}?${NC} $prompt ${DIM}(0-$max):${NC} "
-        read -r input
+        echo -ne "  ${YELLOW}?${NC} $prompt ${DIM}(0-$max):${NC} " >&2
+        if ! read -r input; then
+            echo "Input ended before scoring was complete." >&2
+            return 1
+        fi
         if [[ -z "$input" ]]; then
-            echo -e "  ${RED}Please enter a number between 0 and $max${NC}"
+            echo -e "  ${RED}Please enter a number between 0 and $max${NC}" >&2
             continue
         fi
         if [[ "$input" =~ ^[0-9]+$ ]]; then
@@ -246,7 +256,7 @@ get_score() {
                 break
             fi
         fi
-        echo -e "  ${RED}Please enter a valid number between 0 and $max${NC}"
+        echo -e "  ${RED}Please enter a valid number between 0 and $max${NC}" >&2
     done
     echo "$score"
 }
@@ -284,7 +294,8 @@ score_first_impression() {
     echo "    Score 1-3: Vague or feature-focused headline"
     echo "    Score 0: No headline or completely unclear"
     echo ""
-    local headline_score=$(get_score "Headline clarity and benefit score" 8)
+    local headline_score
+    headline_score=$(get_score "Headline clarity and benefit score" 8)
     SUBSECTION_SCORES["headline"]=$headline_score
     section_total=$((section_total + headline_score))
     display_subsection_score "Headline" "$headline_score" 8
@@ -295,7 +306,8 @@ score_first_impression() {
     echo "    Score 1-2: Buried below the fold"
     echo "    Score 0: No clear value proposition"
     echo ""
-    local value_prop_score=$(get_score "Value proposition visibility score" 6)
+    local value_prop_score
+    value_prop_score=$(get_score "Value proposition visibility score" 6)
     SUBSECTION_SCORES["value_prop"]=$value_prop_score
     section_total=$((section_total + value_prop_score))
     display_subsection_score "Value Proposition Visibility" "$value_prop_score" 6
@@ -306,7 +318,8 @@ score_first_impression() {
     echo "    Score 1-2: Weak connection to traffic source"
     echo "    Score 0: Complete disconnect from traffic source"
     echo ""
-    local message_match_score=$(get_score "Message match score" 6)
+    local message_match_score
+    message_match_score=$(get_score "Message match score" 6)
     SUBSECTION_SCORES["message_match"]=$message_match_score
     section_total=$((section_total + message_match_score))
     display_subsection_score "Message Match" "$message_match_score" 6
@@ -333,7 +346,8 @@ score_lift_model() {
     echo "    Score 1-2: Content feels generic or mass-market"
     echo "    Score 0: Complete mismatch between content and audience"
     echo ""
-    local relevance_score=$(get_score "Relevance to audience score" 6)
+    local relevance_score
+    relevance_score=$(get_score "Relevance to audience score" 6)
     SUBSECTION_SCORES["relevance"]=$relevance_score
     section_total=$((section_total + relevance_score))
     display_subsection_score "Relevance" "$relevance_score" 6
@@ -344,7 +358,8 @@ score_lift_model() {
     echo "    Score 1-2: Visitors need to think to understand"
     echo "    Score 0: Message is confusing or contradictory"
     echo ""
-    local clarity_score=$(get_score "Clarity of message and design score" 6)
+    local clarity_score
+    clarity_score=$(get_score "Clarity of message and design score" 6)
     SUBSECTION_SCORES["clarity"]=$clarity_score
     section_total=$((section_total + clarity_score))
     display_subsection_score "Clarity" "$clarity_score" 6
@@ -355,7 +370,8 @@ score_lift_model() {
     echo "    Score 1-2: Weak or generic urgency"
     echo "    Score 0: No urgency whatsoever"
     echo ""
-    local urgency_score=$(get_score "Urgency to act score" 6)
+    local urgency_score
+    urgency_score=$(get_score "Urgency to act score" 6)
     SUBSECTION_SCORES["urgency"]=$urgency_score
     section_total=$((section_total + urgency_score))
     display_subsection_score "Urgency" "$urgency_score" 6
@@ -366,7 +382,8 @@ score_lift_model() {
     echo "    Score 1-2: Limited trust signals"
     echo "    Score 0: No trust signals present"
     echo ""
-    local anxiety_score=$(get_score "Anxiety reduction score" 6)
+    local anxiety_score
+    anxiety_score=$(get_score "Anxiety reduction score" 6)
     SUBSECTION_SCORES["anxiety"]=$anxiety_score
     section_total=$((section_total + anxiety_score))
     display_subsection_score "Anxiety Reduction" "$anxiety_score" 6
@@ -377,7 +394,8 @@ score_lift_model() {
     echo "    Score 1-2: Multiple competing CTAs or offers"
     echo "    Score 0: Cluttered page with many competing elements"
     echo ""
-    local distraction_score=$(get_score "Distraction minimization score" 6)
+    local distraction_score
+    distraction_score=$(get_score "Distraction minimization score" 6)
     SUBSECTION_SCORES["distraction"]=$distraction_score
     section_total=$((section_total + distraction_score))
     display_subsection_score "Distraction Minimization" "$distraction_score" 6
@@ -404,7 +422,8 @@ score_trust_credibility() {
     echo "    Score 1-2: Minimal social proof"
     echo "    Score 0: No social proof whatsoever"
     echo ""
-    local social_proof_score=$(get_score "Social proof score" 5)
+    local social_proof_score
+    social_proof_score=$(get_score "Social proof score" 5)
     SUBSECTION_SCORES["social_proof"]=$social_proof_score
     section_total=$((section_total + social_proof_score))
     display_subsection_score "Social Proof" "$social_proof_score" 5
@@ -415,7 +434,8 @@ score_trust_credibility() {
     echo "    Score 1-2: Few credibility indicators"
     echo "    Score 0: No credibility indicators"
     echo ""
-    local credibility_score=$(get_score "Credibility indicators score" 5)
+    local credibility_score
+    credibility_score=$(get_score "Credibility indicators score" 5)
     SUBSECTION_SCORES["credibility"]=$credibility_score
     section_total=$((section_total + credibility_score))
     display_subsection_score "Credibility Indicators" "$credibility_score" 5
@@ -426,7 +446,8 @@ score_trust_credibility() {
     echo "    Score 1-2: Weak guarantee or hard to find"
     echo "    Score 0: No guarantee offered"
     echo ""
-    local guarantee_score=$(get_score "Guarantee/risk reversal score" 5)
+    local guarantee_score
+    guarantee_score=$(get_score "Guarantee/risk reversal score" 5)
     SUBSECTION_SCORES["guarantee"]=$guarantee_score
     section_total=$((section_total + guarantee_score))
     display_subsection_score "Guarantee/Risk Reversal" "$guarantee_score" 5
@@ -453,7 +474,8 @@ score_cta_effectiveness() {
     echo "    Score 1-2: Multiple competing CTAs"
     echo "    Score 0: No clear primary CTA"
     echo ""
-    local single_focus_score=$(get_score "Single focused action score" 5)
+    local single_focus_score
+    single_focus_score=$(get_score "Single focused action score" 5)
     SUBSECTION_SCORES["single_focus"]=$single_focus_score
     section_total=$((section_total + single_focus_score))
     display_subsection_score "Single Focused Action" "$single_focus_score" 5
@@ -464,7 +486,8 @@ score_cta_effectiveness() {
     echo "    Score 1-2: Weak or passive language"
     echo "    Score 0: No action verb or confusing"
     echo ""
-    local action_copy_score=$(get_score "Action-oriented copy score" 5)
+    local action_copy_score
+    action_copy_score=$(get_score "Action-oriented copy score" 5)
     SUBSECTION_SCORES["action_copy"]=$action_copy_score
     section_total=$((section_total + action_copy_score))
     display_subsection_score "Action-Oriented Copy" "$action_copy_score" 5
@@ -475,7 +498,8 @@ score_cta_effectiveness() {
     echo "    Score 1-2: CTA blends in with other elements"
     echo "    Score 0: CTA hard to find"
     echo ""
-    local visual_prominence_score=$(get_score "Visual prominence score" 5)
+    local visual_prominence_score
+    visual_prominence_score=$(get_score "Visual prominence score" 5)
     SUBSECTION_SCORES["visual_prominence"]=$visual_prominence_score
     section_total=$((section_total + visual_prominence_score))
     display_subsection_score "Visual Prominence" "$visual_prominence_score" 5
@@ -502,7 +526,8 @@ score_usability() {
     echo "    Score 1-2: Page requires thinking to navigate"
     echo "    Score 0: Page is actively confusing"
     echo ""
-    local krug_score=$(get_score "Krug's laws compliance score" 5)
+    local krug_score
+    krug_score=$(get_score "Krug's laws compliance score" 5)
     SUBSECTION_SCORES["krug_laws"]=$krug_score
     section_total=$((section_total + krug_score))
     display_subsection_score "Krug's Laws" "$krug_score" 5
@@ -513,7 +538,8 @@ score_usability() {
     echo "    Score 1-2: Walls of text, few visual breaks"
     echo "    Score 0: Impossible to scan"
     echo ""
-    local scannable_score=$(get_score "Scannable formatting score" 5)
+    local scannable_score
+    scannable_score=$(get_score "Scannable formatting score" 5)
     SUBSECTION_SCORES["scannable"]=$scannable_score
     section_total=$((section_total + scannable_score))
     display_subsection_score "Scannable Formatting" "$scannable_score" 5
@@ -540,7 +566,8 @@ score_technical() {
     echo "    Score 1-2: Too many required fields"
     echo "    Score 0: Form is broken or has major issues"
     echo ""
-    local form_score=$(get_score "Form optimization score" 5)
+    local form_score
+    form_score=$(get_score "Form optimization score" 5)
     SUBSECTION_SCORES["form"]=$form_score
     section_total=$((section_total + form_score))
     display_subsection_score "Form Optimization" "$form_score" 5
@@ -551,7 +578,8 @@ score_technical() {
     echo "    Score 1-2: Mobile experience is poor"
     echo "    Score 0: Page doesn't work on mobile"
     echo ""
-    local mobile_score=$(get_score "Mobile considerations score" 5)
+    local mobile_score
+    mobile_score=$(get_score "Mobile considerations score" 5)
     SUBSECTION_SCORES["mobile"]=$mobile_score
     section_total=$((section_total + mobile_score))
     display_subsection_score "Mobile Considerations" "$mobile_score" 5
@@ -592,8 +620,8 @@ display_final_results() {
 
     if [ $TOTAL_SCORE -ge 90 ]; then
         grade="EXCELLENT"; grade_color=$GREEN
-        grade_description="Ready for high-traffic campaigns"
-        recommendation="Your landing page is well-optimized. Consider A/B testing variations."
+        grade_description="High heuristic score; validate with audience evidence"
+        recommendation="Review the evidence behind this self-assessment; consider a measured test."
     elif [ $TOTAL_SCORE -ge 75 ]; then
         grade="GOOD"; grade_color=$GREEN
         grade_description="Minor optimizations recommended"
@@ -608,6 +636,7 @@ display_final_results() {
         recommendation="This page needs significant work before it's ready for traffic."
     fi
 
+    echo "Editorial heuristic only: scores do not predict conversions or certify launch readiness."
     echo -e "${BOLD}${WHITE}FINAL SCORE:${NC}"
     echo ""
     echo -e "     ${BOLD}${grade_color}╔══════════════════════════════════════════╗${NC}"
@@ -656,6 +685,7 @@ export_results() {
     local filename=$1
     {
         echo "# Landing Page Score Report"
+        echo "Editorial heuristic only: scores do not predict conversions or certify launch readiness."
         echo "Generated: $(date)"
         echo ""
         echo "## Final Score: $TOTAL_SCORE/100"
@@ -695,20 +725,28 @@ quick_mode() {
     print_divider
 
     echo -e "\n${BOLD}${CYAN}SECTION 1: FIRST IMPRESSION (0-20)${NC}"
-    local s1_headline=$(get_score "Headline clarity/benefit" 8)
-    local s1_value=$(get_score "Value prop in 5 seconds" 6)
-    local s1_match=$(get_score "Message match" 6)
+    local s1_headline
+    s1_headline=$(get_score "Headline clarity/benefit" 8)
+    local s1_value
+    s1_value=$(get_score "Value prop in 5 seconds" 6)
+    local s1_match
+    s1_match=$(get_score "Message match" 6)
     SECTION_SCORES["first_impression"]=$((s1_headline + s1_value + s1_match))
     SUBSECTION_SCORES["headline"]=$s1_headline
     SUBSECTION_SCORES["value_prop"]=$s1_value
     SUBSECTION_SCORES["message_match"]=$s1_match
 
     echo -e "\n${BOLD}${CYAN}SECTION 2: LIFT MODEL (0-30)${NC}"
-    local s2_relevance=$(get_score "Relevance" 6)
-    local s2_clarity=$(get_score "Clarity" 6)
-    local s2_urgency=$(get_score "Urgency" 6)
-    local s2_anxiety=$(get_score "Anxiety reduction" 6)
-    local s2_distraction=$(get_score "Distraction minimization" 6)
+    local s2_relevance
+    s2_relevance=$(get_score "Relevance" 6)
+    local s2_clarity
+    s2_clarity=$(get_score "Clarity" 6)
+    local s2_urgency
+    s2_urgency=$(get_score "Urgency" 6)
+    local s2_anxiety
+    s2_anxiety=$(get_score "Anxiety reduction" 6)
+    local s2_distraction
+    s2_distraction=$(get_score "Distraction minimization" 6)
     SECTION_SCORES["lift_model"]=$((s2_relevance + s2_clarity + s2_urgency + s2_anxiety + s2_distraction))
     SUBSECTION_SCORES["relevance"]=$s2_relevance
     SUBSECTION_SCORES["clarity"]=$s2_clarity
@@ -717,33 +755,43 @@ quick_mode() {
     SUBSECTION_SCORES["distraction"]=$s2_distraction
 
     echo -e "\n${BOLD}${CYAN}SECTION 3: TRUST (0-15)${NC}"
-    local s3_social=$(get_score "Social proof" 5)
-    local s3_cred=$(get_score "Credibility" 5)
-    local s3_guarantee=$(get_score "Guarantee" 5)
+    local s3_social
+    s3_social=$(get_score "Social proof" 5)
+    local s3_cred
+    s3_cred=$(get_score "Credibility" 5)
+    local s3_guarantee
+    s3_guarantee=$(get_score "Guarantee" 5)
     SECTION_SCORES["trust_credibility"]=$((s3_social + s3_cred + s3_guarantee))
     SUBSECTION_SCORES["social_proof"]=$s3_social
     SUBSECTION_SCORES["credibility"]=$s3_cred
     SUBSECTION_SCORES["guarantee"]=$s3_guarantee
 
     echo -e "\n${BOLD}${CYAN}SECTION 4: CTA (0-15)${NC}"
-    local s4_focus=$(get_score "Single focus" 5)
-    local s4_action=$(get_score "Action copy" 5)
-    local s4_visual=$(get_score "Visual prominence" 5)
+    local s4_focus
+    s4_focus=$(get_score "Single focus" 5)
+    local s4_action
+    s4_action=$(get_score "Action copy" 5)
+    local s4_visual
+    s4_visual=$(get_score "Visual prominence" 5)
     SECTION_SCORES["cta_effectiveness"]=$((s4_focus + s4_action + s4_visual))
     SUBSECTION_SCORES["single_focus"]=$s4_focus
     SUBSECTION_SCORES["action_copy"]=$s4_action
     SUBSECTION_SCORES["visual_prominence"]=$s4_visual
 
     echo -e "\n${BOLD}${CYAN}SECTION 5: USABILITY (0-10)${NC}"
-    local s5_krug=$(get_score "Krug's Laws" 5)
-    local s5_scan=$(get_score "Scannable" 5)
+    local s5_krug
+    s5_krug=$(get_score "Krug's Laws" 5)
+    local s5_scan
+    s5_scan=$(get_score "Scannable" 5)
     SECTION_SCORES["usability"]=$((s5_krug + s5_scan))
     SUBSECTION_SCORES["krug_laws"]=$s5_krug
     SUBSECTION_SCORES["scannable"]=$s5_scan
 
     echo -e "\n${BOLD}${CYAN}SECTION 6: TECHNICAL (0-10)${NC}"
-    local s6_form=$(get_score "Form optimization" 5)
-    local s6_mobile=$(get_score "Mobile" 5)
+    local s6_form
+    s6_form=$(get_score "Form optimization" 5)
+    local s6_mobile
+    s6_mobile=$(get_score "Mobile" 5)
     SECTION_SCORES["technical"]=$((s6_form + s6_mobile))
     SUBSECTION_SCORES["form"]=$s6_form
     SUBSECTION_SCORES["mobile"]=$s6_mobile

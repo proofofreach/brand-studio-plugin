@@ -1,5 +1,8 @@
 # Conversion Testing Methodology Reference
 
+> Evidence boundary: This is a historical framework library, not a validated statistical calculator. Example lifts, sample sizes, durations, scores, and case studies are illustrations unless their sources and assumptions have been checked. Do not quote them as forecasts or prescribe a universal response-count threshold. Define the metric, baseline, minimum detectable effect, uncertainty, assignment, and stopping rule for the actual experiment. A p-value is not the probability that the null hypothesis is true.
+
+
 ## Quick Reference Guide
 
 ### Minimum Statistical Requirements (Memorize These)
@@ -1941,7 +1944,7 @@ ATTACHMENTS
 
 ### Quick Hypothesis Generation Checklist
 
-When Claude generates test hypotheses, use this checklist:
+When generating test hypotheses, use this checklist:
 
 ```
 HYPOTHESIS QUALITY CHECKLIST
@@ -1950,7 +1953,7 @@ HYPOTHESIS QUALITY CHECKLIST
 [ ] MEASURABLE: Success metric is identified
 [ ] RESEARCH-BASED: Connected to qualitative or quantitative data
 [ ] LIFT-CONNECTED: Explains which LIFT factor is addressed
-[ ] MAGNITUDE ESTIMATED: Includes expected % lift range
+[ ] EFFECT TARGET: Defines a meaningful detectable effect; forecasts require supporting data
 [ ] TESTABLE: Can be isolated and measured
 [ ] ACTIONABLE: Implementation is feasible
 [ ] BUSINESS-RELEVANT: Connects to meaningful outcomes
@@ -1967,61 +1970,13 @@ HYPOTHESIS RED FLAGS (Avoid These)
 
 ---
 
-## Appendix: Statistical Tables Quick Reference
+## Statistical planning
 
-### Sample Size Requirements by Effect Size and Baseline
-
-```
-CONVERSIONS NEEDED PER VARIATION (95% confidence, 80% power)
-
-Baseline     | 5% MDE | 10% MDE | 15% MDE | 20% MDE | 25% MDE
-Rate         |        |         |         |         |
--------------|--------|---------|---------|---------|--------
-1%           | 31,000 | 7,800   | 3,500   | 2,000   | 1,300
-2%           | 15,500 | 3,900   | 1,750   | 1,000   | 640
-3%           | 10,400 | 2,600   | 1,200   | 670     | 430
-5%           | 6,300  | 1,600   | 710     | 400     | 260
-10%          | 3,200  | 800     | 360     | 210     | 135
-15%          | 2,200  | 540     | 250     | 145     | 95
-20%          | 1,600  | 400     | 190     | 110     | 72
-
-MDE = Minimum Detectable Effect (relative lift)
-Example: 2% baseline with 10% MDE means detecting lift from 2% to 2.2%
-```
-
-### Test Duration Guidelines
-
-```
-MINIMUM TEST DURATION BY CONVERSION VOLUME
-
-Daily Conversions | Min Duration | Reasoning
-------------------|--------------|----------------------------------
-< 10              | 30+ days     | Need more data; consider bolder tests
-10-25             | 20+ days     | Account for weekly variation
-25-50             | 14+ days     | Standard testing window
-50-100            | 10 days      | Minimum to capture 2 weekends
-100-200           | 10 days      | Can detect medium effects quickly
-200+              | 10 days      | Can detect smaller effects
-
-ALWAYS run minimum 10 days regardless of sample size to capture full week cycle
-```
-
-### Confidence Level Reference
-
-```
-CONFIDENCE LEVEL INTERPRETATION
-
-Confidence | p-value | False Positive | When to Use
-Level      |         | Risk           |
------------|---------|----------------|---------------------------
-99%        | < 0.01  | 1%             | High-stakes, irreversible
-95%        | < 0.05  | 5%             | Standard testing
-90%        | < 0.10  | 10%            | Exploration only
-```
+Calculate the required observations using the actual baseline, effect definition, test design, significance level, and power. Distinguish observations from conversions and absolute from relative change. Account for repeated looks, multiple comparisons, attribution delays, and relevant business cycles. There is no universal minimum duration or conversion count. State assumptions and use a verified calculator or implementation when a numerical plan is requested.
 
 ---
 
-## Using This Reference: Instructions for Claude
+## Using This Reference
 
 When generating test hypotheses:
 
@@ -2031,7 +1986,7 @@ When generating test hypotheses:
 
 3. **Be specific about the change** - Exactly what will be different?
 
-4. **Estimate effect size** - Based on similar tests or the boldness of change
+4. **Define the effect target** - Choose a meaningful minimum detectable effect for planning; do not predict a lift from the boldness of a change
 
 5. **Include success criteria** - What lift is needed to implement?
 

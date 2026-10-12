@@ -1,304 +1,110 @@
 # Brand Studio
 
-<div align="center">
+Portable agent skills for marketing copy, visual identity, and cohesive brand systems. Built by [Codeface Media](https://codefacemedia.com).
 
-[![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-7C3AED)](https://claude.ai/code)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)]()
+Brand Studio supplies the working methods and reference library. Your agent supplies the model and available tools. No particular model, image service, MCP server, or API key is required by the package.
 
-**Complete brand identity toolkit for Claude Code. Copywriting, visual design, and brand guidelines — all from your terminal.**
+| Skill | Use it for |
+| --- | --- |
+| `copywriting` | Headlines, landing pages, emails, ads, direct mail, offers, and copy reviews |
+| `designing` | Logos, palettes, typography, visual identity, and asset specifications |
+| `brand-building` | Coordinate strategy, design, and voice into a consistent brand kit |
 
-### Quick Install
+## Install
 
-```bash
-# Add the marketplace
+Choose one installation route per host to avoid duplicate skill registrations.
+
+### Claude Code plugin
+
+```sh
 claude plugin marketplace add https://github.com/ProofOfReach/brand-studio-plugin.git
-
-# Install the plugin
-claude plugin install brand-studio@brand-studio-plugin
+claude plugin install brand-studio@brand-studio-local
 ```
 
-</div>
+The existing `brand-studio-local` marketplace name is preserved for current users. Restart Claude Code after installation. Invoke `/brand-studio:copy`, `/brand-studio:design`, or `/brand-studio:brand-kit`, or ask for a task matching a core skill.
 
----
+### Codex plugin
 
-## TL;DR
-
-**The Problem**: Building a brand requires juggling copywriters, designers, and brand strategists. You end up with inconsistent messaging, mismatched visuals, and brand guidelines nobody follows.
-
-**The Solution**: Brand Studio gives Claude Code three specialized skills that work together — research-driven copywriting, principled visual design, and unified brand system orchestration.
-
-### Why Use Brand Studio?
-
-| Feature | What It Does |
-|---------|--------------|
-| **Research-First Copy** | Headlines and sales copy grounded in Hopkins, Cialdini, Schwartz frameworks |
-| **Awareness-Level Matching** | Automatically adapts messaging to cold, warm, or hot audiences |
-| **AI-Powered Design** | Logo concepts, color palettes, typography via nano-banana MCP |
-| **Brand Kit Orchestration** | Full brand guidelines from strategy through visual identity to voice |
-| **Reference Libraries** | 15+ specialized frameworks loaded on-demand per task |
-
----
-
-## Quick Example
-
-```bash
-# Write a complete landing page with research phase
-/copywriting
-> "Write a landing page for MenuFlow, an AI-powered inventory
-   management tool for restaurant owners"
-
-# Create a color palette with accessibility checks
-/designing
-> "Create a color palette for MenuFlow - mood: trustworthy,
-   modern, appetizing. Must pass WCAG AA."
-
-# Build a full brand kit from scratch
-/brand-building
-> "Create brand guidelines for MenuFlow with values:
-   efficiency, reliability, simplicity"
+```sh
+codex plugin marketplace add https://github.com/ProofOfReach/brand-studio-plugin.git
+codex plugin add brand-studio@brand-studio
 ```
 
----
+Restart Codex, select a Brand Studio skill, or ask for a matching task. This route uses the portable root `plugin.json` and the Codex repository marketplace. It does not submit the package to OpenAI's public directory.
 
-## How Brand Studio Compares
+### Local skills: Codex, Claude Code, or Gemini CLI
 
-| Capability | Brand Studio | Generic AI | Copywriter + Designer | DIY |
-|------------|--------------|------------|----------------------|-----|
-| Research-first process | ✅ Built-in | ❌ Skips research | ✅ Manual | ❌ |
-| Awareness-level matching | ✅ Automatic | ❌ Generic | ⚠️ If experienced | ❌ |
-| Proven frameworks | ✅ 15+ loaded | ❌ Generic prompts | ⚠️ Varies | ❌ |
-| Visual + verbal alignment | ✅ Integrated | ❌ Separate | ⚠️ Coordination needed | ❌ |
-| Brand guidelines output | ✅ Complete doc | ❌ Fragments | ✅ Manual assembly | ❌ |
+Keep one checkout as the canonical source:
 
-**When to use Brand Studio:**
-- Building a new brand from scratch
-- Creating landing pages, emails, ads with proven conversion frameworks
-- Need consistent visual identity with strategic rationale
-
-**When Brand Studio might not be ideal:**
-- Highly regulated industries requiring legal review
-- Established brands with strict existing guidelines (use those instead)
-
----
-
-## Installation
-
-### Via CLI (Recommended)
-
-```bash
-# Add the marketplace
-claude plugin marketplace add https://github.com/ProofOfReach/brand-studio-plugin.git
-
-# Install the plugin
-claude plugin install brand-studio@brand-studio-plugin
+```sh
+git clone https://github.com/ProofOfReach/brand-studio-plugin.git
+cd brand-studio-plugin
+python3 scripts/install-skills.py codex
+# Or: python3 scripts/install-skills.py claude
+# Or: python3 scripts/install-skills.py gemini
 ```
 
-### Per-Session Loading
+The installer requires Python 3.9+ and permission to create directory symlinks. It links the three complete skill folders; it does not copy them, edit agent settings, install tools, or read credentials. Windows users may need Developer Mode or an elevated shell for symlink creation.
 
-```bash
-claude --plugin-dir /path/to/brand-studio-plugin
+| Target | User location | Project location |
+| --- | --- | --- |
+| `codex` or `shared` | `~/.agents/skills/` | `.agents/skills/` |
+| `claude` | `~/.claude/skills/` | `.claude/skills/` |
+| `gemini` | `~/.gemini/skills/` | `.gemini/skills/` |
+
+For project scope, run the installer from the project directory:
+
+```sh
+python3 /path/to/brand-studio-plugin/scripts/install-skills.py codex --scope project
 ```
 
----
+Use `--destination /path/to/skills` for another Agent Skills-compatible host. Existing unrelated files, directories, or links block installation; the installer never overwrites them. Keep the checkout in place and reload your host's skills. For Gemini CLI, use `/skills reload` and `/skills list`.
 
-## Skills
+Remove only this checkout's links with the same target and scope:
 
-### Copywriting Skill (`/copywriting`)
-
-Generate research-driven marketing copy using proven frameworks.
-
-| Use Case | Example |
-|----------|---------|
-| Landing pages | `/copywriting` then describe your product and audience |
-| Headlines | Ask for headline variations for your offer |
-| Email sequences | Request email copy with awareness-level matching |
-| Ad copy | Generate Facebook/Google ad variations |
-
-### Designing Skill (`/designing`)
-
-Create visual brand concepts with principled design rationale.
-
-| Use Case | Example |
-|----------|---------|
-| Logo concepts | `/designing` then describe brand personality |
-| Color palettes | Request palette with mood and accessibility requirements |
-| Typography | Get font pairing recommendations for your industry |
-
-### Brand-Building Skill (`/brand-building`)
-
-Orchestrate complete brand guidelines combining copy and design.
-
-| Use Case | Example |
-|----------|---------|
-| New brand | `/brand-building` with name, values, and target audience |
-| Brand refresh | Provide existing assets for cohesive update |
-| Brand guidelines doc | Generate complete brand book |
-
----
-
-## Architecture
-
-```
-brand-studio/
-│
-├── skills/
-│   ├── copywriting/             # Copywriting skill
-│   │   ├── SKILL.md             # Write Mode + Review Mode workflows
-│   │   ├── references/          # 11 framework files
-│   │   │   ├── headlines.md     # Headline formulas, swipe file
-│   │   │   ├── landing-pages.md # LIFT Model, conversion principles
-│   │   │   ├── psychology.md    # Cialdini's 6 principles
-│   │   │   ├── awareness-levels.md # Schwartz's 5 levels
-│   │   │   └── ...
-│   │   └── scripts/             # Analysis tools
-│   │
-│   ├── designing/               # Visual design skill
-│   │   ├── SKILL.md             # 5-stage design process
-│   │   └── references/          # 4 principle files
-│   │       ├── logo-design-principles.md
-│   │       ├── color-theory-principles.md
-│   │       ├── typography-principles.md
-│   │       └── brand-strategy-principles.md
-│   │
-│   └── brand-building/          # Orchestration skill
-│       └── SKILL.md             # 5-phase brand creation workflow
-│
-└── .claude-plugin/
-    └── plugin.json              # Plugin manifest
+```sh
+python3 scripts/install-skills.py codex --uninstall
 ```
 
----
+Use the host's plugin uninstall command if you chose a plugin installation. Updating the checkout updates linked skills; plugin users should refresh the marketplace and update through their host.
 
-## The Methodology
+Installation locations follow [Codex's skill documentation](https://learn.chatgpt.com/docs/build-skills), [Claude Code's plugin documentation](https://code.claude.com/docs/en/plugins-reference), and [Gemini CLI's skills documentation](https://geminicli.com/docs/cli/skills/).
 
-### Copywriting Foundations
+## Use
 
-Brand Studio's copy skill is built on four masters:
+Examples work as ordinary requests after installation; slash-command syntax is host-specific.
 
-| Author | Framework | Applied To |
-|--------|-----------|------------|
-| **Claude Hopkins** | Scientific Advertising | Specificity, testing, proof |
-| **Robert Cialdini** | 6 Principles of Influence | Reciprocity, scarcity, authority |
-| **Eugene Schwartz** | 5 Awareness Levels | Message-to-market matching |
-| **Chip & Dan Heath** | SUCCESs (Made to Stick) | Memorable, sticky messaging |
+- “Use copywriting to improve this landing page. Preserve the facts and do not invent results.”
+- “Use designing to create an icon-only SVG mark and an accessible color palette for this brand.”
+- “Use brand-building to produce a concise brand kit from this audience, positioning, and product brief.”
+- “Write a postcard and sales letter for this offer using the supplied customer research.”
 
-### Design Foundations
+The skills use supplied context first and load references only when relevant. If browsing is available, research can use it. Without browsing, the agent works from supplied material and labels unanswered research questions. If image generation is available, the design skill can use it. Without it, the agent can create suitable vector assets or provide concepts and production specifications, without claiming to have rendered images.
 
-| Domain | Core Principles |
-|--------|----------------|
-| **Logo Design** | Simplicity, memorability, versatility, appropriateness, timelessness |
-| **Color Theory** | Harmony, contrast, psychology, context, accessibility (WCAG) |
-| **Typography** | Hierarchy, legibility, personality, pairing, restraint |
-| **Brand Strategy** | Positioning, differentiation, consistency, evolution |
+For raster assets needing transparency, the agent checks the tool's actual output rather than assuming that every image provider has the same capabilities. Provider-specific workarounds are conditional. Print color conversions and editorial scores are estimates, not press proofs or conversion forecasts.
 
----
+## Compatibility and verification
 
-## Configuration
+| Surface | Release verification |
+| --- | --- |
+| Codex CLI | Native marketplace installation and discovery; local skill installation |
+| Claude Code | Native manifest validation and marketplace installation; local skill installation |
+| Gemini CLI | Documented discovery layout and local installation; native Gemini execution not tested |
+| Other Agent Skills hosts | Portable `SKILL.md` files and complete relative resources; host-specific behavior not certified |
+| Image/search providers | Capability-based instructions; no image or search service bundled |
 
-### Image Generation (Optional)
+The core workflows are Markdown and need no shell. Optional copy-audit helpers require Bash and standard Unix tools; the landing-page scorer requires Bash 4+. Their scores are editorial heuristics; they do not establish commercial results or release readiness.
 
-For AI-generated logos and visual concepts, configure nano-banana MCP:
+Run the local packaging checks:
 
-```bash
-# In your Claude Code MCP config
-{
-  "mcpServers": {
-    "nano-banana": {
-      "command": "npx",
-      "args": ["-y", "nano-banana-mcp"]
-    }
-  }
-}
+```sh
+python3 tests/release_e2e.py --artifact /tmp/brand-studio-release-e2e.json
+claude plugin validate .claude-plugin/plugin.json --strict
+claude plugin validate .claude-plugin/marketplace.json --strict
 ```
 
----
-
-## Troubleshooting
-
-### "Reference file not found"
-
-**Cause:** Skill is looking for a framework file that wasn't loaded.
-
-**Solution:** Ensure the plugin is installed completely:
-```bash
-claude plugin remove brand-studio
-claude plugin add proofofreach/brand-studio
-```
-
-### Design commands not generating images
-
-**Cause:** nano-banana MCP not configured.
-
-**Solution:** The design skill works without image generation (provides specs and directions), but for actual asset creation, configure the MCP as shown above.
-
-### Still having issues?
-
-1. Search [existing issues](https://github.com/ProofOfReach/copywriting-plugin/issues)
-2. Open a [new issue](https://github.com/ProofOfReach/copywriting-plugin/issues/new)
-
----
-
-## Limitations
-
-### What Brand Studio Doesn't Do (Yet)
-
-- **Legal/compliance review** — Copy is marketing-focused, not legal-reviewed
-- **Actual asset files** — Outputs specs and concepts; final production requires design tools
-- **Brand enforcement** — Audits are advisory, not automated enforcement
-
-### Known Constraints
-
-| Constraint | Workaround |
-|------------|------------|
-| Image generation requires MCP | Design skill still provides detailed specs without it |
-| No direct Figma/Sketch export | Use specs to recreate in design tools |
-
----
-
-## FAQ
-
-### Why "Brand Studio"?
-
-It's a complete studio for brand creation — not just copywriting, not just design, but the full integrated workflow.
-
-### What happened to "copywriting-plugin"?
-
-Brand Studio is the evolution. The original copywriting skill is now `/copywriting`, joined by `/designing` and `/brand-building` for complete brand creation.
-
-### Can I use just the copywriting skill?
-
-Yes. Each skill works independently. Use `/copywriting` without touching designing or brand-building.
-
-### Does it work with my existing brand?
-
-Yes. Use `/copywriting` to review existing copy, or provide your brand guidelines when using any skill to generate on-brand content.
-
-### Can I use this commercially?
-
-Yes — MIT license. Use it for client work, your own brands, whatever you need.
-
----
-
-## Contributing
-
-Contributions welcome. Please open an issue to discuss proposed changes before submitting a PR.
-
-**Areas we'd love help with:**
-- Additional copywriting frameworks (VSL, webinar scripts)
-- Industry-specific reference files
-- Integration with more design MCPs
-
----
+See [release verification](docs/RELEASE_VERIFICATION.md) for behavioral scenarios, native host versions, and remaining limits. Per-skill `tests/scenarios.md` files define repeatable behavioral checks. `LOG.md`, `CHANGELOG.md`, and `PURPOSE.md` are maintenance records, not runtime instructions.
 
 ## License
 
-MIT
-
----
-
-<div align="center">
-
-*Built by [ProofOfReach](https://github.com/ProofOfReach)*
-
-</div>
+[MIT](LICENSE) covers this package. Named frameworks and authors are attributed in the reference material; their original works, fonts, trademarks, and generated assets retain their own applicable rights.

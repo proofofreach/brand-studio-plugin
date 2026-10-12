@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "brand-studio",
+  "version": "0.2.0",
+  "description": "Portable skills for marketing copy, visual identity, and cohesive brand systems.",
+  "author": {
+    "name": "Codeface Media",
+    "url": "https://codefacemedia.com"
+  },
+  "homepage": "https://github.com/ProofOfReach/brand-studio-plugin",
+  "repository": "https://github.com/ProofOfReach/brand-studio-plugin",
+  "license": "MIT",
+  "keywords": [
+    "branding",
+    "copywriting",
+    "design",
+    "marketing",
+    "agent-skills"
+  ]
+}

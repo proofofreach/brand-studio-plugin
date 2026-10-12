@@ -403,7 +403,7 @@ analyze_headline() {
     if [ $total_score -ge 90 ]; then
         grade="A+"
         grade_color=$GREEN
-        recommendation="Exceptional headline! Ready to test."
+        recommendation="High heuristic score. Verify claims and audience fit before testing."
     elif [ $total_score -ge 80 ]; then
         grade="A"
         grade_color=$GREEN
@@ -411,7 +411,7 @@ analyze_headline() {
     elif [ $total_score -ge 70 ]; then
         grade="B"
         grade_color=$YELLOW
-        recommendation="Good foundation. Add specificity or urgency."
+        recommendation="Review clarity and supported specifics; urgency must be genuine."
     elif [ $total_score -ge 60 ]; then
         grade="C"
         grade_color=$YELLOW
@@ -426,6 +426,7 @@ analyze_headline() {
         recommendation="Start over with benefit-focused approach."
     fi
 
+    echo "Editorial heuristic only: this score does not predict conversions or verify claims."
     echo -e "${BOLD}FINAL SCORE: ${grade_color}${total_score}/100 (Grade: $grade)${NC}"
     echo ""
     echo -n "   "
@@ -437,9 +438,9 @@ analyze_headline() {
 
     # Quick improvement tips
     echo -e "${BOLD}${CYAN}Quick Improvement Tips:${NC}"
-    [ $useful_score -lt 10 ] && echo "  → Add a clear benefit or promise"
-    [ $specific_score -lt 10 ] && echo "  → Include specific numbers or timeframes"
-    [ $unique_score -lt 10 ] && echo "  → Differentiate with 'secret', 'new', or 'only'"
+    [ $useful_score -lt 10 ] && echo "  → Clarify a supported benefit"
+    [ $specific_score -lt 10 ] && echo "  → Include numbers or timeframes only when verified"
+    [ $unique_score -lt 10 ] && echo "  → Explain a verified difference; avoid unsupported exclusivity"
     [ $emotional_score -lt 10 ] && echo "  → Add emotional trigger words"
     [ $power_word_count -eq 0 ] && echo "  → Include power words for impact"
     echo ""
@@ -451,7 +452,7 @@ if [ $# -eq 0 ]; then
     echo "Usage: headline-analyzer.sh \"Your Headline Here\""
     echo ""
     echo "Example:"
-    echo "  headline-analyzer.sh \"7 Secrets Top Marketers Use to Double Their Email Open Rates\""
+    echo "  headline-analyzer.sh \"SMS Appointment Reminders for Independent Tutors\""
     echo ""
     exit 1
 fi
